@@ -39,7 +39,5 @@ func (q *Queue) Full() <-chan struct{} {
 }
 
 func (q *Queue) Close() {
-	// close(q.i)
-	// close(q.pop)
 	close(q.fullNotify)
 }
