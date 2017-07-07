@@ -21,7 +21,7 @@ func TestCountChanQueue(t *testing.T) {
 			case i := <-q.Pop():
 				fmt.Println("third", i)
 				count++
-			case <-q.Full():
+			case <-q.Empty():
 				fmt.Println("quit")
 				ch <- count
 			}
