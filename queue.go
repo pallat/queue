@@ -5,6 +5,7 @@ func NewQueue(total int) *Queue {
 	for i := 0; i < total; i++ {
 		ch <- i
 	}
+	close(ch)
 
 	q := &Queue{
 		i:           ch,
@@ -22,12 +23,10 @@ type Queue struct {
 }
 
 func (q *Queue) background() {
-	for {
-		q.pop <- <-q.i
-		if len(q.i) == 0 {
-			q.emptyNotify <- struct{}{}
-		}
+	for i := range q.i {
+		q.pop <- i
 	}
+	q.emptyNotify <- struct{}{}
 }
 
 func (q *Queue) Pop() <-chan int {
