@@ -23,6 +23,9 @@ type Queue struct {
 }
 
 func (q *Queue) background() {
+	defer close(q.pop)
+	defer close(q.emptyNotify)
+
 	for i := range q.i {
 		q.pop <- i
 	}
@@ -35,8 +38,4 @@ func (q *Queue) Pop() <-chan int {
 
 func (q *Queue) Empty() <-chan struct{} {
 	return q.emptyNotify
-}
-
-func (q *Queue) Close() {
-	close(q.emptyNotify)
 }
