@@ -13,14 +13,14 @@ type lot struct {
 }
 
 func (l *lot) do(i <-chan int) {
-	for {
-		fmt.Println(l.items[<-i])
+	for x := range i {
+		fmt.Println(l.items[x])
 		l.count <- struct{}{}
-		if len(l.count) == len(l.items) {
-			l.notify <- struct{}{}
-			return
+		if len(l.count) == (len(l.items)) {
+			break
 		}
 	}
+	l.notify <- struct{}{}
 }
 
 func (l *lot) end() <-chan struct{} {
