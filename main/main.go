@@ -10,15 +10,21 @@ type lot struct {
 	items  []int
 	count  chan struct{}
 	notify chan struct{}
+	i      int
 }
 
 func (l *lot) do(i <-chan int) {
 	for x := range i {
 		fmt.Println(l.items[x])
 		l.count <- struct{}{}
-		if len(l.count) == (len(l.items)) {
-			break
-		}
+		l.i++
+	}
+}
+
+func (l *lot) counting(x <-chan struct{}) {
+	<-x
+	for i := 0; i < len(l.items); i++ {
+		<-l.count
 	}
 	l.notify <- struct{}{}
 }
@@ -35,6 +41,7 @@ func main() {
 	}
 
 	q := queue.NewQueue(len(l.items))
+	go l.counting(q.Empty())
 
 	go l.do(q.Pop())
 	go l.do(q.Pop())
@@ -42,5 +49,5 @@ func main() {
 	go l.do(q.Pop())
 
 	<-l.end()
-	fmt.Println("total:", len(l.count))
+	fmt.Println("total:", l.i)
 }
