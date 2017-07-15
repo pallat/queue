@@ -6,7 +6,7 @@ import (
 )
 
 func TestCountChanQueue(t *testing.T) {
-	q := NewQueue(10)
+	q := NewQueue(100)
 	chCount := make(chan int)
 	go func(ch chan int) {
 		count := 0
@@ -30,7 +30,7 @@ func TestCountChanQueue(t *testing.T) {
 
 	count := <-chCount
 
-	if count != 10 {
+	if count != 100 {
 		t.Error("it should return only 10 times but got", count)
 	}
 }
