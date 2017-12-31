@@ -5,8 +5,21 @@ import (
 	"testing"
 )
 
+type mySimpler struct {
+	i []int
+}
+
+func (m mySimpler) Len() int {
+	return len(m.i)
+}
+
+func (m mySimpler) Pop(i int) interface{} {
+	return m.i[i]
+}
+
 func TestCountChanQueue(t *testing.T) {
-	q := NewQueue(100)
+	s := mySimpler{i: make([]int, 100)}
+	q := NewQueue(s)
 	chCount := make(chan int)
 	go func(ch chan int) {
 		count := 0

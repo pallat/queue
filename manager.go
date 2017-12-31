@@ -2,7 +2,6 @@ package queue
 
 import (
 	"context"
-	"fmt"
 )
 
 type Worker interface {
@@ -10,7 +9,6 @@ type Worker interface {
 }
 
 type Manager struct {
-	items  []interface{}
 	count  chan struct{}
 	notify chan struct{}
 	i      int
@@ -20,12 +18,11 @@ type Manager struct {
 	q      *Queue
 }
 
-func NewManager(ctx context.Context, w Worker, items ...interface{}) *Manager {
-	q := NewQueue(len(items))
-	total := len(items)
+func NewManager(ctx context.Context, w Worker, s Simpler) *Manager {
+	q := NewQueue(s)
+	total := s.Len()
 	m := &Manager{
 		count:  make(chan struct{}, total),
-		items:  items,
 		notify: make(chan struct{}),
 		total:  total,
 		i:      0,
@@ -38,15 +35,14 @@ func NewManager(ctx context.Context, w Worker, items ...interface{}) *Manager {
 }
 
 func (m *Manager) Do() {
-	ch := make(chan int, 1)
+	ch := make(chan interface{}, 1)
 	for x := range m.q.Pop() {
 		select {
 		case ch <- x:
-			m.w.Do(m.items[<-ch])
+			m.w.Do(<-ch)
 			m.count <- struct{}{}
 			m.i++
 		case <-m.ctx.Done():
-			fmt.Println(m.ctx.Err)
 			m.notify <- struct{}{}
 		}
 	}
@@ -54,7 +50,7 @@ func (m *Manager) Do() {
 
 func (m *Manager) counting(x <-chan struct{}) {
 	<-x
-	for i := 0; i < len(m.items); i++ {
+	for i := 0; i < m.total; i++ {
 		<-m.count
 	}
 	m.notify <- struct{}{}
