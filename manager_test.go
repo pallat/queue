@@ -96,3 +96,33 @@ func TestQueuManagerWhenWorkerHasPanic(t *testing.T) {
 		t.Error("not finish", w)
 	}
 }
+
+type workError int
+
+func (w *workError) Do(v interface{}) error {
+	if (v.(int) % 2) == 0 {
+		return errors.New("it's error")
+	}
+	return nil
+}
+
+func TestQueuManagerWhenWorkerHasError(t *testing.T) {
+	s := mySimpler{i: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}}
+
+	var w workError
+	ctx := context.Background()
+	m := NewManager(ctx, &w, s)
+
+	go m.Do()
+	go m.Do()
+
+	<-m.End()
+
+	if w != 0 {
+		t.Error("not finish", w)
+	}
+
+	for err := range m.Error() {
+		fmt.Println("---->", err)
+	}
+}

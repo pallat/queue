@@ -11,7 +11,6 @@ type Worker interface {
 type Manager struct {
 	count  chan struct{}
 	notify chan struct{}
-	i      int
 	total  int
 	w      Worker
 	ctx    context.Context
@@ -26,11 +25,10 @@ func NewManager(ctx context.Context, w Worker, s Simpler) *Manager {
 		count:  make(chan struct{}, total),
 		notify: make(chan struct{}),
 		total:  total,
-		i:      0,
 		w:      w,
 		ctx:    ctx,
 		q:      q,
-		cherr:  make(chan error),
+		cherr:  make(chan error, total),
 	}
 	go m.counting(q.Empty())
 	return m
@@ -41,9 +39,8 @@ func (m *Manager) Do() {
 	for x := range m.q.Pop() {
 		select {
 		case ch <- x:
-			m.w.Do(<-ch)
+			m.cherr <- m.w.Do(<-ch)
 			m.count <- struct{}{}
-			m.i++
 		case <-m.ctx.Done():
 			m.notify <- struct{}{}
 		}
@@ -55,9 +52,14 @@ func (m *Manager) counting(x <-chan struct{}) {
 	for i := 0; i < m.total; i++ {
 		<-m.count
 	}
+	close(m.cherr)
 	m.notify <- struct{}{}
 }
 
 func (m *Manager) End() <-chan struct{} {
 	return m.notify
+}
+
+func (m *Manager) Error() <-chan error {
+	return m.cherr
 }
