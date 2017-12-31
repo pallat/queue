@@ -10,9 +10,10 @@ import (
 
 type work int
 
-func (w *work) Do(v interface{}) {
+func (w *work) Do(v interface{}) error {
 	fmt.Printf("-->%#v\n%#v\n", w, v)
 	*w++
+	return nil
 }
 
 func TestQueuManager(t *testing.T) {
@@ -38,10 +39,11 @@ func TestQueuManager(t *testing.T) {
 
 type slow int
 
-func (w *slow) Do(v interface{}) {
+func (w *slow) Do(v interface{}) error {
 	time.Sleep(500 * time.Millisecond)
 	*w++
 	fmt.Println(w, v)
+	return nil
 }
 
 func TestQueuManagerTimeout(t *testing.T) {
@@ -68,13 +70,14 @@ func TestQueuManagerTimeout(t *testing.T) {
 
 type workPanic int
 
-func (w *workPanic) Do(v interface{}) {
+func (w *workPanic) Do(v interface{}) error {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println(r)
 		}
 	}()
 	panic(errors.New("fail"))
+	return nil
 }
 
 func TestQueuManagerWhenWorkerHasPanic(t *testing.T) {
