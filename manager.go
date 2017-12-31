@@ -20,7 +20,8 @@ type Manager struct {
 	q      *Queue
 }
 
-func NewManager(ctx context.Context, q *Queue, w Worker, items ...interface{}) *Manager {
+func NewManager(ctx context.Context, w Worker, items ...interface{}) *Manager {
+	q := NewQueue(len(items))
 	total := len(items)
 	m := &Manager{
 		count:  make(chan struct{}, total),

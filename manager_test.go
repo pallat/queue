@@ -18,9 +18,8 @@ func TestQueuManager(t *testing.T) {
 	items := []interface{}{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
 	var w work
-	q := NewQueue(len(items))
 	ctx := context.Background()
-	m := NewManager(ctx, q, &w, items...)
+	m := NewManager(ctx, &w, items...)
 
 	go m.Do()
 	go m.Do()
@@ -48,11 +47,10 @@ func TestQueuManagerTimeout(t *testing.T) {
 	items := []interface{}{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 
 	var w slow
-	q := NewQueue(len(items))
 	ctx, cancel := context.WithTimeout(context.Background(), 300*time.Millisecond)
 	defer cancel()
 
-	m := NewManager(ctx, q, &w, items...)
+	m := NewManager(ctx, &w, items...)
 
 	go m.Do()
 	go m.Do()
