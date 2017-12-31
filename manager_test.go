@@ -59,6 +59,25 @@ func TestQueuManagerWith1To50Fields(t *testing.T) {
 	}
 }
 
+func TestQueuManagerWithIntItems(t *testing.T) {
+	var w work
+	ctx := context.Background()
+	m := NewManager(ctx, &w, 1, 2, 3, 4, 5)
+
+	go m.Do()
+	go m.Do()
+	go m.Do()
+	go m.Do()
+	go m.Do()
+	go m.Do()
+
+	<-m.End()
+
+	if w != 5 {
+		t.Error("not finish", w)
+	}
+}
+
 type slow int
 
 func (w *slow) Do(v interface{}) {
