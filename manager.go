@@ -17,6 +17,7 @@ type Manager struct {
 	total  int
 	w      Worker
 	ctx    context.Context
+	q      *Queue
 }
 
 func NewManager(ctx context.Context, q *Queue, w Worker, items ...interface{}) *Manager {
@@ -29,14 +30,15 @@ func NewManager(ctx context.Context, q *Queue, w Worker, items ...interface{}) *
 		i:      0,
 		w:      w,
 		ctx:    ctx,
+		q:      q,
 	}
 	go m.counting(q.Empty())
 	return m
 }
 
-func (m *Manager) Do(i <-chan int) {
+func (m *Manager) Do() {
 	ch := make(chan int, 1)
-	for x := range i {
+	for x := range m.q.Pop() {
 		select {
 		case ch <- x:
 			m.w.Do(m.items[<-ch])

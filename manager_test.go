@@ -22,10 +22,12 @@ func TestQueuManager(t *testing.T) {
 	ctx := context.Background()
 	m := NewManager(ctx, q, &w, items...)
 
-	go m.Do(q.Pop())
-	go m.Do(q.Pop())
-	go m.Do(q.Pop())
-	go m.Do(q.Pop())
+	go m.Do()
+	go m.Do()
+	go m.Do()
+	go m.Do()
+	go m.Do()
+	go m.Do()
 
 	<-m.End()
 
@@ -52,10 +54,10 @@ func TestQueuManagerTimeout(t *testing.T) {
 
 	m := NewManager(ctx, q, &w, items...)
 
-	go m.Do(q.Pop())
-	go m.Do(q.Pop())
-	go m.Do(q.Pop())
-	go m.Do(q.Pop())
+	go m.Do()
+	go m.Do()
+	go m.Do()
+	go m.Do()
 
 	<-m.End()
 
