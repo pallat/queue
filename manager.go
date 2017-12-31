@@ -16,6 +16,7 @@ type Manager struct {
 	w      Worker
 	ctx    context.Context
 	q      *Queue
+	cherr  chan error
 }
 
 func NewManager(ctx context.Context, w Worker, s Simpler) *Manager {
@@ -29,6 +30,7 @@ func NewManager(ctx context.Context, w Worker, s Simpler) *Manager {
 		w:      w,
 		ctx:    ctx,
 		q:      q,
+		cherr:  make(chan error),
 	}
 	go m.counting(q.Empty())
 	return m

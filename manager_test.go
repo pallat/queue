@@ -2,6 +2,7 @@ package queue
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"testing"
 	"time"
@@ -62,5 +63,33 @@ func TestQueuManagerTimeout(t *testing.T) {
 
 	if w == 10 {
 		t.Error("not timeout", w)
+	}
+}
+
+type workPanic int
+
+func (w *workPanic) Do(v interface{}) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println(r)
+		}
+	}()
+	panic(errors.New("fail"))
+}
+
+func TestQueuManagerWhenWorkerHasPanic(t *testing.T) {
+	s := mySimpler{i: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}}
+
+	var w workPanic
+	ctx := context.Background()
+	m := NewManager(ctx, &w, s)
+
+	go m.Do()
+	go m.Do()
+
+	<-m.End()
+
+	if w != 0 {
+		t.Error("not finish", w)
 	}
 }
