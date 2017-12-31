@@ -1,5 +1,7 @@
 package queue
 
+// Simpler is the represent of your items, You just make you type with 2 methods
+// Len() return the number of your items and Pop return each item by index
 type Simpler interface {
 	Pop(i int) interface{}
 	Len() int
