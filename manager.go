@@ -4,6 +4,8 @@ import (
 	"context"
 )
 
+// Worker is the represent of your business logic and return anything you want,
+// such as error or string or any type
 type Worker interface {
 	Do(v interface{}) interface{}
 }
