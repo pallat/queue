@@ -35,6 +35,30 @@ func TestQueuManager(t *testing.T) {
 	}
 }
 
+func TestQueuManagerWith1To50Fields(t *testing.T) {
+	items := []interface{}{0, 1, 2}
+
+	for i := 3; i < 50; i++ {
+		items = append(items, i)
+		total := len(items)
+		var w work
+		ctx := context.Background()
+		m := NewManager(ctx, &w, items...)
+
+		go m.Do()
+		go m.Do()
+		go m.Do()
+		go m.Do()
+
+		<-m.End()
+
+		if w != work(total) {
+			t.Error("not finish", w)
+			return
+		}
+	}
+}
+
 type slow int
 
 func (w *slow) Do(v interface{}) {
