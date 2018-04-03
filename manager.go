@@ -5,7 +5,7 @@ import (
 )
 
 type Worker interface {
-	Do(v interface{}) interface{}
+	Do(v interface{}) error
 }
 
 type Manager struct {

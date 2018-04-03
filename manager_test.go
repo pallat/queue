@@ -10,7 +10,7 @@ import (
 
 type work int
 
-func (w *work) Do(v interface{}) interface{} {
+func (w *work) Do(v interface{}) error {
 	fmt.Printf("-->%#v\n%#v\n", w, v)
 	*w++
 	return nil
@@ -39,7 +39,7 @@ func TestQueuManager(t *testing.T) {
 
 type slow int
 
-func (w *slow) Do(v interface{}) interface{} {
+func (w *slow) Do(v interface{}) error {
 	time.Sleep(500 * time.Millisecond)
 	*w++
 	fmt.Println(w, v)
@@ -70,7 +70,7 @@ func TestQueuManagerTimeout(t *testing.T) {
 
 type workPanic int
 
-func (w *workPanic) Do(v interface{}) interface{} {
+func (w *workPanic) Do(v interface{}) error {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println(r)
@@ -99,7 +99,7 @@ func TestQueuManagerWhenWorkerHasPanic(t *testing.T) {
 
 type workError int
 
-func (w *workError) Do(v interface{}) interface{} {
+func (w *workError) Do(v interface{}) error {
 	if (v.(int) % 2) == 0 {
 		return errors.New("it's error")
 	}
