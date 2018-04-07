@@ -126,3 +126,17 @@ func TestQueuManagerWhenWorkerHasError(t *testing.T) {
 		fmt.Println("---->", err)
 	}
 }
+
+func TestQueuManagerAssignGoRoutineNumber(t *testing.T) {
+	s := mySimpler{i: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}}
+
+	var w work
+	ctx := context.Background()
+	m := NewManager(ctx, &w, s)
+
+	m.Execute(12)
+
+	if w != 10 {
+		t.Error("not finish", w)
+	}
+}

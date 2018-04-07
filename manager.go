@@ -34,6 +34,14 @@ func NewManager(ctx context.Context, w Worker, s Simpler) *Manager {
 	return m
 }
 
+func (m *Manager) Execute(n int) {
+	for i := 0; i < n; i++ {
+		go m.Do()
+	}
+
+	<-m.End()
+}
+
 func (m *Manager) Do() {
 	ch := make(chan interface{}, 1)
 	for x := range m.q.Pop() {
