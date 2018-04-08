@@ -34,7 +34,7 @@ func NewManager(ctx context.Context, w Worker, s Simpler) *Manager {
 	return m
 }
 
-func (m *Manager) Execute(n int) {
+func (m *Manager) Parallel(n int) {
 	for i := 0; i < n; i++ {
 		go m.Do()
 	}

@@ -134,7 +134,7 @@ func TestQueuManagerAssignGoRoutineNumber(t *testing.T) {
 	ctx := context.Background()
 	m := NewManager(ctx, &w, s)
 
-	m.Execute(12)
+	m.Parallel(12)
 
 	if w != 10 {
 		t.Error("not finish", w)
