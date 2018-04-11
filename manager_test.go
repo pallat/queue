@@ -140,3 +140,19 @@ func TestQueuManagerAssignGoRoutineNumber(t *testing.T) {
 		t.Error("not finish", w)
 	}
 }
+
+func TestInterrupt(t *testing.T) {
+	s := mySimpler{i: []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}}
+
+	var w slow
+	ctx, cancel := context.WithCancel(context.Background())
+	m := NewManager(ctx, &w, s)
+
+	go m.Parallel(2)
+	<-time.After(1 * time.Second)
+	cancel()
+
+	if w > 4 {
+		t.Error("it should not finish more than 4 but finished", w)
+	}
+}
