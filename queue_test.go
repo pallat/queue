@@ -25,14 +25,14 @@ func TestCountChanQueue(t *testing.T) {
 		count := 0
 		for {
 			select {
+			// case i := <-q.Pop():
+			// 	fmt.Println("first", i)
+			// 	count++
+			// case i := <-q.Pop():
+			// 	fmt.Println("second", i)
+			// 	count++
 			case i := <-q.Pop():
-				fmt.Println("first", i)
-				count++
-			case i := <-q.Pop():
-				fmt.Println("second", i)
-				count++
-			case i := <-q.Pop():
-				fmt.Println("third", i)
+				fmt.Println("get", i)
 				count++
 			case <-q.Empty():
 				fmt.Println("quit")
@@ -44,6 +44,6 @@ func TestCountChanQueue(t *testing.T) {
 	count := <-chCount
 
 	if count != 100 {
-		t.Error("it should return only 10 times but got", count)
+		t.Error("it should return only 100 times but got", count)
 	}
 }
