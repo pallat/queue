@@ -63,7 +63,7 @@ func (m *Manager) counting(x <-chan struct{}) {
 		<-m.count
 	}
 	close(m.chv)
-	m.notify <- struct{}{}
+	close(m.notify)
 }
 
 func (m *Manager) End() <-chan struct{} {
