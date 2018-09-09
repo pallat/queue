@@ -1,0 +1,14 @@
+
+Working with channels
+go get th #2
+18:04 19 Sep 2018
+Tags: queue, chan, goroutine
+
+Pallat Anchaleechamaikorn
+Software Engineer, KBTG
+yod.pallat@gmail.com
+https://github.com/pallat
+
+* Chan
+
+.code queue.go /^type Queue/,/^}/
